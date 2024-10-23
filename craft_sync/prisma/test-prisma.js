@@ -1,4 +1,4 @@
-import prisma from '../src/app/utils/prisma'
+import prisma from '../src/app/api/utils/prisma'
 
 async function testConnection() {
   try {
