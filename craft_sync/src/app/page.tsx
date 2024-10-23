@@ -1,40 +1,30 @@
-const LandingPage = () => {
-  return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
-      <header className="w-full py-6 bg-white shadow-lg">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <div className="text-2xl font-bold">MyApp</div>
-          <div>
-            <a href="/login" className="text-lg font-medium text-gray-700 hover:text-gray-900 mx-4">
-              Login
-            </a>
-            <a href="/signup" className="text-lg font-medium text-gray-700 hover:text-gray-900">
-              Sign Up
-            </a>
-          </div>
-        </nav>
-      </header>
+// src/app/page.tsx (Landing Page)
+import React from 'react';
+import LandingSlides from './components/LandingSlides';
+import HowItWorks from './components/HowItWorks';
 
-      <main className="flex-grow flex flex-col justify-center items-center text-center px-4">
-        <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
-          Welcome to MyApp
-        </h1>
-        <p className="text-lg md:text-xl text-gray-600 mb-8">
-          The best platform to manage your projects and tasks efficiently.
-        </p>
-        <a
-          href="/signup"
-          className="px-8 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-500 transition"
-        >
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <header className="bg-blue-600 text-white p-6 text-center">
+        <h1 className="text-4xl font-bold">Welcome to CraftSync</h1>
+        <p className="mt-2 text-lg">Manage your creative projects, team, and clients in one place</p>
+        <a href="/auth/signup" className="bg-white text-blue-600 px-4 py-2 mt-4 inline-block rounded-lg">
           Get Started
         </a>
-      </main>
+      </header>
 
-      <footer className="w-full py-4 bg-gray-800 text-white text-center">
-        <p>&copy; 2024 MyApp. All rights reserved.</p>
+      <section className="mt-10">
+        <LandingSlides />
+      </section>
+
+      <section className="mt-16">
+        <HowItWorks />
+      </section>
+
+      <footer className="bg-gray-800 text-white p-6 text-center">
+        <p>&copy; {new Date().getFullYear()} CraftSync. All rights reserved.</p>
       </footer>
     </div>
   );
-};
-
-export default LandingPage;
+}
