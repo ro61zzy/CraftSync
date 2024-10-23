@@ -26,5 +26,11 @@ enum Role {
   CLIENT
 }
 
+model Invite {
+  id    Int    @id @default(autoincrement())
+  email String
+  role  Role
+  token String @unique
+}
 
 
