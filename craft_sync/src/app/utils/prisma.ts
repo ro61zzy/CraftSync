@@ -1,4 +1,3 @@
-//only inithialize a one time instance of prisma client to prevent error in production, see https://www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/nextjs-prisma-client-dev-practices
 import { PrismaClient } from '@prisma/client'
 
 const prismaClientSingleton = () => {
