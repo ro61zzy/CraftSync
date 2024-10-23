@@ -1,9 +1,8 @@
 // src/app/api/auth/signup/route.ts
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../utils/prisma';
 import { hash } from 'bcryptjs';  // Use bcrypt to hash passwords
 import { NextResponse } from 'next/server';
 
-const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   const { email, password, role } = await req.json();

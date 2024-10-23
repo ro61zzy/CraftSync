@@ -1,11 +1,11 @@
 // src/app/api/auth/[...nextauth]/route.ts
 import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../utils/prisma';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs'; // Assuming you're hashing passwords
 
-const prisma = new PrismaClient();
+
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),

@@ -1,8 +1,7 @@
 // src/app/api/invites/[token]/route.ts
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../utils/prisma';
 import { NextResponse } from 'next/server';
 
-const prisma = new PrismaClient();
 
 export async function GET(req, { params }) {
   const { token } = params;
