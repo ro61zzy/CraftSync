@@ -1,67 +1,58 @@
-import NextAuth from "next-auth";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import prisma from "@/lib/prisma"; // Make sure you have prisma client in lib
+// src/app/api/auth/[...nextauth]/route.ts
+import NextAuth from 'next-auth';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { PrismaClient } from '@prisma/client';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { compare } from 'bcryptjs'; // Assuming you're hashing passwords
+
+const prisma = new PrismaClient();
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
+  session: {
+    strategy: 'jwt', // Use JWT sessions
+  },
   providers: [
-    // Example provider (you can add more like GitHub, Credentials, etc.)
-    {
-      id: "credentials",
-      name: "Credentials",
-      type: "credentials",
+    CredentialsProvider({
+      name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'text' },
+        password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
+        // Find user by email
         const user = await prisma.user.findUnique({
           where: { email: credentials?.email },
         });
 
-        if (!user) {
+        // If no user found or password doesn't match, return null (auth fails)
+        if (!user || !(await compare(credentials.password, user.password))) {
           return null;
         }
 
-        return user;
+        return user; // Return user object on successful auth
       },
-    },
+    }),
   ],
   callbacks: {
-    async session({ session, user }) {
-      const dbUser = await prisma.user.findUnique({
-        where: { email: session.user.email },
-        include: { role: true },
-      });
-
-      if (dbUser) {
-        session.user.id = dbUser.id;
-        session.user.role = dbUser.role.name;
+    async jwt({ token, user }) {
+      if (user) {
+        // Add user role to the JWT token
+        token.role = user.role;
       }
-
+      return token;
+    },
+    async session({ session, token }) {
+      // Attach the role from the token to the session
+      session.user.role = token.role;
       return session;
     },
-    async signIn({ user }) {
-      // Ensure that users are assigned the "Client" role by default if they don't have one
-      const dbUser = await prisma.user.findUnique({
-        where: { email: user.email },
-      });
-
-      if (!dbUser) {
-        await prisma.user.update({
-          where: { email: user.email },
-          data: {
-            role: {
-              connect: { name: "Client" }, // Default role
-            },
-          },
-        });
-      }
-
-      return true;
-    },
+  },
+  pages: {
+    signIn: '/auth/signin', // Custom sign-in page if needed
   },
 };
 
 const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };
