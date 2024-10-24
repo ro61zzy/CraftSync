@@ -14,7 +14,7 @@ export default function SignUpAdmin() {
     const res = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, role: 'ADMIN' }),  // Only allow ADMIN sign-ups
+      body: JSON.stringify({ email, password, role: 'ADMIN' }), 
     });
 
     if (res.ok) {
@@ -30,7 +30,7 @@ export default function SignUpAdmin() {
       <h1 className="text-3xl font-bold mb-6 text-center text-header">
   Project Manager
   <br />
-  <span className="text-2xl">Sign Up</span> {/* Smaller font size for "Sign Up" */}
+  <span className="text-2xl">Sign Up</span>
 </h1>
         <div className="mb-4">
           <input
