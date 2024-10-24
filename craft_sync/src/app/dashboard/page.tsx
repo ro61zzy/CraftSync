@@ -1,20 +1,32 @@
-// src/app/dashboard/page.tsx
+// src/app/dashboard/page.tsx (Enhanced Admin Dashboard)
 import { useState } from 'react';
 
 export default function AdminDashboard() {
   const [projectName, setProjectName] = useState('');
+  const [taskList, setTaskList] = useState([{ name: '' }]);
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('TEAM');
   const [message, setMessage] = useState('');
   const [projectMessage, setProjectMessage] = useState('');
 
-  // Create a project
+  // Create a new task
+  const handleTaskChange = (index, value) => {
+    const tasks = [...taskList];
+    tasks[index].name = value;
+    setTaskList(tasks);
+  };
+
+  const addTask = () => {
+    setTaskList([...taskList, { name: '' }]);
+  };
+
+  // Create a new project with tasks
   const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const res = await fetch('/api/projects', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: projectName }),
+      body: JSON.stringify({ name: projectName, tasks: taskList }),
     });
 
     if (res.ok) {
@@ -55,6 +67,26 @@ export default function AdminDashboard() {
             onChange={(e) => setProjectName(e.target.value)}
             className="border p-2 w-full mb-4"
           />
+
+          <h3 className="text-lg font-bold">Add Tasks</h3>
+          {taskList.map((task, index) => (
+            <input
+              key={index}
+              type="text"
+              placeholder={`Task ${index + 1}`}
+              value={task.name}
+              onChange={(e) => handleTaskChange(index, e.target.value)}
+              className="border p-2 w-full mb-2"
+            />
+          ))}
+          <button
+            type="button"
+            onClick={addTask}
+            className="bg-gray-500 text-white p-2 w-full mb-4"
+          >
+            Add Task
+          </button>
+
           <button type="submit" className="bg-blue-500 text-white p-2 w-full">
             Create Project
           </button>
@@ -87,8 +119,6 @@ export default function AdminDashboard() {
         </form>
         {message && <p>{message}</p>}
       </section>
-
-      {/* Here you can add more features, like listing all projects, team members, etc. */}
     </div>
   );
 }

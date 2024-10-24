@@ -11,13 +11,15 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  name      String?
-  password  String
-  role      Role     @default(CLIENT)  // Default to CLIENT when invited
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  name        String?
+  password    String
+  role        Role      @default(CLIENT)
+  projectsAsTeam Project[]  @relation("ProjectTeam")
+  projectsAsClient Project[]  @relation("ProjectClient")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 enum Role {
@@ -34,3 +36,11 @@ model Invite {
 }
 
 
+model Project {
+  id          Int       @id @default(autoincrement())
+  name        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  teamMembers User[]    @relation("ProjectTeam")
+  clients     User[]    @relation("ProjectClient")
+}
