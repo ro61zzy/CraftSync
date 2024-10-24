@@ -12,6 +12,7 @@ const config: Config = {
         primary: '#7B1179', // Primary background color
         header: '#5B0A59',  // Header text color
         black: '#000000',    // Body text color
+        hover: '#C17EC0'
       },
     },
   },

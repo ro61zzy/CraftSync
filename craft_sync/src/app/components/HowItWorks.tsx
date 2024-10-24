@@ -4,7 +4,7 @@ import React from 'react';
 const steps = [
   {
     title: 'Step 1: Create Company Profile',
-    description: 'Admins sign up and create a company profile.',
+    description: 'Project Manager - Admin sign up and create a company profile.',
   },
   {
     title: 'Step 2: Invite Team Members',
