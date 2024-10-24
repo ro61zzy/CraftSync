@@ -3,8 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary-color: #7B1179; /* Define your primary color */
+  --header-color: #5B0A59;  /* Header text color */
+  --body-text-color: black;  /* Body text color */
 }
 
 @media (prefers-color-scheme: dark) {

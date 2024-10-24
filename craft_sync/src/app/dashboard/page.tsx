@@ -11,7 +11,7 @@ export default function AdminDashboard() {
   const [projectMessage, setProjectMessage] = useState('');
 
   // Create a new task
-  const handleTaskChange = (index, value) => {
+  const handleTaskChange = (index: number, value: string) => {
     const tasks = [...taskList];
     tasks[index].name = value;
     setTaskList(tasks);
