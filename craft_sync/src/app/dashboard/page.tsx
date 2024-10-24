@@ -1,16 +1,94 @@
-import StatsCard from "./components/StatsCard";
+// src/app/dashboard/page.tsx
+import { useState } from 'react';
 
-const OverviewPage = () => {
+export default function AdminDashboard() {
+  const [projectName, setProjectName] = useState('');
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState('TEAM');
+  const [message, setMessage] = useState('');
+  const [projectMessage, setProjectMessage] = useState('');
+
+  // Create a project
+  const handleProjectSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const res = await fetch('/api/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: projectName }),
+    });
+
+    if (res.ok) {
+      setProjectMessage('Project created successfully!');
+    } else {
+      setProjectMessage('Error creating project.');
+    }
+  };
+
+  // Invite team members or clients
+  const handleInviteSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const res = await fetch('/api/invites', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, role }),
+    });
+
+    if (res.ok) {
+      setMessage('Invite sent successfully');
+    } else {
+      setMessage('Error sending invite');
+    }
+  };
+
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Dashboard Overview</h1>
-      <div className="grid grid-cols-3 gap-6">
-        <StatsCard title="Total Projects" value={12} />
-        <StatsCard title="Active Tasks" value={8} />
-        <StatsCard title="Pending Tasks" value={3} />
-      </div>
+    <div className="p-6">
+      <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
+
+      {/* Create a Project Section */}
+      <section className="mb-8">
+        <h2 className="text-xl font-bold mb-4">Create a New Project</h2>
+        <form onSubmit={handleProjectSubmit} className="mb-4">
+          <input
+            type="text"
+            placeholder="Project Name"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            className="border p-2 w-full mb-4"
+          />
+          <button type="submit" className="bg-blue-500 text-white p-2 w-full">
+            Create Project
+          </button>
+        </form>
+        {projectMessage && <p>{projectMessage}</p>}
+      </section>
+
+      {/* Invite Users Section */}
+      <section className="mb-8">
+        <h2 className="text-xl font-bold mb-4">Invite Users to Project</h2>
+        <form onSubmit={handleInviteSubmit} className="mb-4">
+          <input
+            type="email"
+            placeholder="User Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border p-2 w-full mb-4"
+          />
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="border p-2 w-full mb-4"
+          >
+            <option value="TEAM">Invite as Team Member</option>
+            <option value="CLIENT">Invite as Client</option>
+          </select>
+          <button type="submit" className="bg-blue-500 text-white p-2 w-full">
+            Send Invite
+          </button>
+        </form>
+        {message && <p>{message}</p>}
+      </section>
+
+      {/* Here you can add more features, like listing all projects, team members, etc. */}
     </div>
   );
-};
-
-export default OverviewPage;
+}
