@@ -20,6 +20,7 @@ model User {
   updatedAt   DateTime  @updatedAt
 }
 
+
 model Invite {
   id    Int    @id @default(autoincrement())
   email String
@@ -27,22 +28,34 @@ model Invite {
   token String @unique
 }
 
+
 model Project {
   id          Int       @id @default(autoincrement())
   name        String
   tasks       Task[]    // One project can have multiple tasks
+  clients     User[]    @relation("ProjectClient")
+  teamMembers User[]    @relation("ProjectTeam")
+  feedback    Feedback[]  // One project can have multiple feedback entries
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  teamMembers User[]    @relation("ProjectTeam")
-  clients     User[]    @relation("ProjectClient")
 }
 
 model Task {
   id          Int       @id @default(autoincrement())
   name        String
+  status      String    @default("not_started")
   project     Project    @relation(fields: [projectId], references: [id])
   projectId   Int
 }
+
+model Feedback {
+  id          Int       @id @default(autoincrement())
+  message     String
+  project     Project    @relation(fields: [projectId], references: [id])
+  projectId   Int
+  createdAt   DateTime   @default(now())
+}
+
 
 enum Role {
   ADMIN
