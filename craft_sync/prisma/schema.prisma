@@ -28,19 +28,21 @@ enum Role {
   CLIENT
 }
 
-model Invite {
-  id    Int    @id @default(autoincrement())
-  email String
-  role  Role
-  token String @unique
-}
-
-
 model Project {
   id          Int       @id @default(autoincrement())
   name        String
+  tasks       Task[]    // One project can have multiple tasks
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   teamMembers User[]    @relation("ProjectTeam")
   clients     User[]    @relation("ProjectClient")
 }
+
+model Task {
+  id          Int       @id @default(autoincrement())
+  name        String
+  project     Project    @relation(fields: [projectId], references: [id])
+  projectId   Int
+}
+
+

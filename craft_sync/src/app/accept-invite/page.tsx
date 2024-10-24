@@ -1,4 +1,3 @@
-// src/app/accept-invite/page.tsx
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -12,10 +11,16 @@ export default function AcceptInvite() {
 
   useEffect(() => {
     async function fetchInvite() {
-      const res = await fetch(`/api/invites?token=${inviteToken}`);
+      const res = await fetch(`/api/invites/${inviteToken}`);
       const data = await res.json();
-      setEmail(data.email);  // Pre-fill email from the invite
-      setRole(data.role);    // Pre-fill role from the invite
+
+      if (res.ok) {
+        setEmail(data.email);  // Pre-fill email from the invite
+        setRole(data.role);    // Pre-fill role (in this case, TEAM)
+      } else {
+        alert('Invalid invite link');
+        router.push('/'); // Redirect if the invite is invalid
+      }
     }
     fetchInvite();
   }, [inviteToken]);
@@ -26,7 +31,7 @@ export default function AcceptInvite() {
     const res = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, role }),
+      body: JSON.stringify({ email, password, role }),  // Role is pre-filled as 'TEAM'
     });
 
     if (res.ok) {
