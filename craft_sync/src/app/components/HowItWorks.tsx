@@ -35,8 +35,8 @@ const HowItWorks = () => {
                 />
               </div>
               <div className="ml-8 bg-white p-6 rounded-lg shadow-md flex-1">
-                <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-                <p className="text-gray-700">{step.description}</p>
+                <h3 className="text-xl font-bold mb-2 text-black">{step.title}</h3>
+                <p className="text-gray-500 ">{step.description}</p>
               </div>
             </div>
           ))}
