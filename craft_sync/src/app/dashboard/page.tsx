@@ -1,4 +1,4 @@
-// src/app/dashboard/page.tsx (Enhanced Admin Dashboard)
+// src/app/dashboard/page.tsx 
 import { useState } from 'react';
 
 export default function AdminDashboard() {
