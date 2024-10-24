@@ -1,9 +1,10 @@
 // src/app/dashboard/page.tsx 
+"use client"
 import { useState } from 'react';
 
 export default function AdminDashboard() {
   const [projectName, setProjectName] = useState('');
-  const [taskList, setTaskList] = useState([{ name: '' }]);
+  const [taskList, setTaskList] = useState([{ name: '' }]); // Ensure this is always an array
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('TEAM');
   const [message, setMessage] = useState('');
@@ -23,18 +24,26 @@ export default function AdminDashboard() {
   // Create a new project with tasks
   const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const testPayload = {
+      name: 'Video Edit',
+      tasks: [{ name: 'Load the video' }, { name: 'JD create the video' }],
+    };
+    
     const res = await fetch('/api/projects', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: projectName, tasks: taskList }),
+      body: JSON.stringify(testPayload),
     });
-
+  
     if (res.ok) {
       setProjectMessage('Project created successfully!');
     } else {
-      setProjectMessage('Error creating project.');
+      const errorResponse = await res.json();
+      setProjectMessage(`Error creating project: ${errorResponse.message}`);
     }
   };
+  
 
   // Invite team members or clients
   const handleInviteSubmit = async (e: React.FormEvent) => {

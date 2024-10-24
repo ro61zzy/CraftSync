@@ -16,13 +16,14 @@ export default function SignIn() {
       password,
       redirect: false,
     });
-
-    if (res?.ok) {
-      router.push('/dashboard');  // Redirect to dashboard after login
-    } else {
-      alert('Invalid credentials');
+  
+    if (res?.error) {
+      alert(res.error); // This will show the error returned by the server.
+    } else if (res?.ok) {
+      router.push('/dashboard');
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center h-screen">
