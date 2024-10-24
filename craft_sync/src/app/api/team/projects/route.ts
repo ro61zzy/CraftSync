@@ -14,4 +14,21 @@ export async function GET(req: Request) {
 
   try {
     // Fetch projects assigned to the logged-in team member
-    const projects = await
+    const projects = await prisma.project.findMany({
+      where: {
+        teamMembers: {
+          some: {
+            email: token.email,
+          },
+        },
+      },
+      include: {
+        tasks: true, // Include tasks for each project
+      },
+    });
+
+    return NextResponse.json({ projects }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ message: 'Error fetching projects', error: error.message }, { status: 500 });
+  }
+}
