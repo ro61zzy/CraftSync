@@ -26,6 +26,14 @@ export default function ClientDashboard() {
             <li key={project.id} className="mb-4 p-4 border">
               <h2 className="text-xl font-bold">{project.name}</h2>
               <p>Project Progress: {project.progress}%</p>
+              <h3 className="text-lg font-bold">Milestones</h3>
+              <ul>
+                {project.milestones.map((milestone) => (
+                  <li key={milestone.id}>
+                    <span>{milestone.name} - Due by {new Date(milestone.dueDate).toLocaleDateString()}</span>
+                  </li>
+                ))}
+              </ul>
               <p>Tasks:</p>
               <ul>
                 {project.tasks.map((task) => (
@@ -35,11 +43,6 @@ export default function ClientDashboard() {
                   </li>
                 ))}
               </ul>
-              <textarea
-                placeholder="Leave feedback or comments"
-                className="block w-full p-2 mt-2 border"
-                onBlur={(e) => handleFeedback(project.id, e.target.value)}
-              />
             </li>
           ))}
         </ul>

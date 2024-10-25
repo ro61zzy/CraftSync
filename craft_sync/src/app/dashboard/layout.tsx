@@ -1,3 +1,4 @@
+//app/dashboard/layout.tsx
 import { ReactNode } from "react";
 import Link from "next/link";
 
@@ -8,22 +9,22 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <div className="flex h-screen">
-      <aside className="w-64 bg-gray-800 text-white p-6">
+      <aside className="w-64 bg-primary text-white p-6">
         <nav>
           <ul className="space-y-4">
-            <li>
-              <Link href="/dashboard" className="text-lg hover:underline">
-                Overview
-              </Link>
-            </li>
+          <li>
+  <Link href="/dashboard" className={`text-lg ${pathname === '/dashboard' ? 'underline' : ''}`}>
+    New Project
+  </Link>
+</li>
             <li>
               <Link href="/dashboard/projects" className="text-lg hover:underline">
-                Projects
+                All Projects
               </Link>
             </li>
             <li>
-              <Link href="/dashboard/tasks" className="text-lg hover:underline">
-                Tasks
+              <Link href="/dashboard/analytics" className="text-lg hover:underline">
+                Projects Analytics
               </Link>
             </li>
           </ul>

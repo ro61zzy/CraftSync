@@ -1,32 +1,45 @@
-// src/app/api/projects/route.ts
 import prisma from '../utils/prisma';
 import { NextResponse } from 'next/server';
 
 
+// Handler for creating a project (POST request)
 export async function POST(req: Request) {
-  const { name, tasks } = await req.json();
-  console.log('Incoming data:', { name, tasks }); // Log incoming data
-  
-  if (!tasks) {
-    return NextResponse.json({ message: 'Tasks array is missing' }, { status: 400 });
-  }
-
+  const { name, tasks, milestones } = await req.json();
 
   try {
     const newProject = await prisma.project.create({
       data: {
         name,
         tasks: {
-          create: Array.isArray(tasks) ? tasks.map((task) => ({ name: task.name })) : [], // Guard against undefined
+          create: tasks.map((task) => ({ name: task.name })),
+        },
+        milestones: {
+          create: milestones.map((milestone) => ({
+            name: milestone.name,
+            dueDate: new Date(milestone.dueDate),
+          })),
         },
       },
     });
-    
+
     return NextResponse.json({ message: 'Project created successfully', project: newProject }, { status: 201 });
   } catch (error) {
-    console.error('Error creating project:', error);
     return NextResponse.json({ message: 'Error creating project', error: error.message }, { status: 500 });
   }
-  
-  
+}
+
+// Handler for fetching all projects (GET request)
+export async function GET() {
+  try {
+    const projects = await prisma.project.findMany({
+      include: {
+        tasks: true,
+        milestones: true,
+      },
+    });
+
+    return NextResponse.json({ projects }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ message: 'Error fetching projects', error: error.message }, { status: 500 });
+  }
 }

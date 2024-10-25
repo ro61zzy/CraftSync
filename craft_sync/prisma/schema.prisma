@@ -8,36 +8,24 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-model User {
-  id          Int       @id @default(autoincrement())
-  email       String    @unique
-  name        String?
-  password    String
-  role        Role      @default(CLIENT)
-  projectsAsTeam Project[]  @relation("ProjectTeam")
-  projectsAsClient Project[]  @relation("ProjectClient")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-}
-
-
-model Invite {
-  id    Int    @id @default(autoincrement())
-  email String
-  role  Role
-  token String @unique
-}
-
-
 model Project {
   id          Int       @id @default(autoincrement())
   name        String
   tasks       Task[]    // One project can have multiple tasks
+  milestones  Milestone[]  // One project can have multiple milestones
   clients     User[]    @relation("ProjectClient")
   teamMembers User[]    @relation("ProjectTeam")
   feedback    Feedback[]  // One project can have multiple feedback entries
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model Milestone {
+  id        Int      @id @default(autoincrement())
+  name      String
+  dueDate   DateTime
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId Int
 }
 
 model Task {
@@ -56,6 +44,17 @@ model Feedback {
   createdAt   DateTime   @default(now())
 }
 
+model User {
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  name        String?
+  password    String
+  role        Role      @default(CLIENT)
+  projectsAsTeam Project[]  @relation("ProjectTeam")
+  projectsAsClient Project[]  @relation("ProjectClient")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
 
 enum Role {
   ADMIN

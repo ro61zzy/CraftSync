@@ -6,11 +6,23 @@ import { useState } from 'react';
 export default function AdminDashboard() {
   const [projectName, setProjectName] = useState('');
   const [taskList, setTaskList] = useState([{ name: '' }]);
+  const [milestones, setMilestones] = useState([{ name: '', dueDate: '' }]);
+
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('TEAM');
   const [message, setMessage] = useState('');
   const [projectMessage, setProjectMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const handleMilestoneChange = (index, field, value) => {
+    const updatedMilestones = [...milestones];
+    updatedMilestones[index][field] = value;
+    setMilestones(updatedMilestones);
+  };
+
+  const addMilestone = () => {
+    setMilestones([...milestones, { name: '', dueDate: '' }]);
+  };
 
   const handleTaskChange = (index: number, value: string) => {
     const tasks = [...taskList];
@@ -125,6 +137,32 @@ export default function AdminDashboard() {
             >
               Add Task
             </button>
+
+            <h3 className="text-lg font-bold">Add Milestones</h3>
+          {milestones.map((milestone, index) => (
+            <div key={index} className="mb-4">
+              <input
+                type="text"
+                placeholder={`Milestone ${index + 1}`}
+                value={milestone.name}
+                onChange={(e) => handleMilestoneChange(index, 'name', e.target.value)}
+                className="border p-2 w-full mb-2"
+              />
+              <input
+                type="date"
+                value={milestone.dueDate}
+                onChange={(e) => handleMilestoneChange(index, 'dueDate', e.target.value)}
+                className="border p-2 w-full"
+              />
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addMilestone}
+            className="bg-gray-500 text-white p-2 w-full mb-4"
+          >
+            Add Milestone
+          </button>
 
             <button type="submit" className="bg-primary text-white p-2 w-full rounded">
               {loading ? 'Creating...' : 'Create Project'}
