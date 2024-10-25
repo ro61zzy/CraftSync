@@ -1,6 +1,8 @@
 // src/app/projects/[id]/page.tsx
 "use client";
 import { useEffect, useState } from 'react';
+import Loader from '../../../components/Loader';
+
 
 interface Task {
   id: number;
@@ -26,6 +28,7 @@ interface Project {
 // Add a parameter to receive `params` from the route
 const ProjectDetailsPage = ({ params }: { params: { id: string } }) => {
   const [project, setProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProjectDetails = async () => {
@@ -33,10 +36,16 @@ const ProjectDetailsPage = ({ params }: { params: { id: string } }) => {
         const res = await fetch(`/api/projects/${params.id}`);
         const data = await res.json();
         setProject(data.project);
+        setLoading(false);
       }
     };
     fetchProjectDetails();
   }, [params.id]);
+
+  if (loading) {
+    return <Loader />; // Use the reusable Loader component here
+  }
+
 
   if (!project) {
     return <p className="text-center text-lg">Loading...</p>; // Show loading state

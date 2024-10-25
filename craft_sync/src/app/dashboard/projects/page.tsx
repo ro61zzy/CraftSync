@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import InviteModal from './InviteModal';
 import { useRouter } from 'next/navigation';
+import Loader from '../../components/Loader';
 
 // Define your interfaces for Task, Milestone, and Project
 interface Task {
@@ -27,6 +28,7 @@ interface Project {
 const ProjectsPage = () => {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showInviteModal, setShowInviteModal] = useState<boolean>(false);
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
 
@@ -35,9 +37,14 @@ const ProjectsPage = () => {
       const res = await fetch('/api/projects');
       const data = await res.json();
       setProjects(data.projects); 
+      setLoading(false);
     }
     fetchProjects();
   }, []);
+
+  if (loading) {
+    return <Loader />; // Use the reusable Loader component here
+  }
 
 
   const openInviteModal = (projectId: number) => {
