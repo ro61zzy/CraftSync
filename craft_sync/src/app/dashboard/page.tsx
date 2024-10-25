@@ -8,9 +8,6 @@ export default function AdminDashboard() {
   const [description, setDescription] = useState('');
   const [taskList, setTaskList] = useState([{ name: '' }]);
   const [milestones, setMilestones] = useState([{ name: '', dueDate: '' }]);
-  const [phone, setPhone] = useState(''); 
-  const [role, setRole] = useState('TEAM');
-  const [message, setMessage] = useState('');
   const [projectMessage, setProjectMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -75,35 +72,7 @@ export default function AdminDashboard() {
   };
 
 
-  const handleInviteSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!phone) {
-      setMessage('Please enter a phone number.');
-      return;
-    }
 
-    setLoading(true);
-
-    // Send invite request with phone number
-    const res = await fetch('/api/invites', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone, role }),
-    });
-
-    if (res.ok) {
-      const inviteData = await res.json();
-      // WhatsApp invite link
-      const inviteLink = `https://wa.me/${phone}?text=You have been invited to join the project. Click the link to accept: ${inviteData.inviteLink}`;
-      window.open(inviteLink, '_blank');  // Opens WhatsApp link
-
-      setMessage('Invite sent successfully');
-      setPhone('');  // Clear the input field after sending
-    } else {
-      setMessage('Error sending invite');
-    }
-    setLoading(false);
-  };
 
   return (
     <div className="flex justify-center items-center min-h-screen p-6 bg-gray-100">
@@ -191,31 +160,7 @@ export default function AdminDashboard() {
           {projectMessage && <p className="text-red-500 mt-4 text-center">{projectMessage}</p>}
         </section>
 
-        {/* Invite Users Section */}
-        <section>
-        <h2 className="text-xl font-bold mb-4 text-header text-center">Invite Users to Project</h2>
-        <form onSubmit={handleInviteSubmit} className="space-y-4">
-          <input
-            type="tel"
-            placeholder="User Phone Number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="border p-2 w-full rounded text-black"
-          />
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="border p-2 w-full rounded"
-          >
-            <option value="TEAM">Invite as Team Member</option>
-            <option value="CLIENT">Invite as Client</option>
-          </select>
-          <button type="submit" className="bg-primary text-white p-2 w-full rounded">
-            {loading ? 'Sending...' : 'Send Invite via WhatsApp'}
-          </button>
-        </form>
-        {message && <p className="text-red-500 mt-4 text-center">{message}</p>}
-      </section>
+       
       </div>
 
       {/* Right Section: Text/Instructions */}

@@ -3,6 +3,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import InviteModal from './InviteModal';
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);

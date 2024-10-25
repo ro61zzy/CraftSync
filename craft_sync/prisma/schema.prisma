@@ -54,12 +54,13 @@ model User {
 
 model Invite {
   id        Int     @id @default(autoincrement())
-  phone     String
+  phone     String  // Phone number instead of email
   role      Role
   token     String  @unique
-  project   Project @relation(fields: [projectId], references: [id])  // Link invite to a project
+  project   Project @relation(fields: [projectId], references: [id])  // Relation to a specific project
   projectId Int     // Foreign key for the associated project
 }
+
 
 
 
