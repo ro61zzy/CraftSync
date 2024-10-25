@@ -13,13 +13,14 @@ datasource db {
 model Project {
   id          Int        @id @default(autoincrement())
   name        String
-  description String?    // New optional description field for projects
+  description String?    // Optional description field for projects
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   tasks       Task[]
-  milestones  Milestone[]  // Relation to milestones for this project
+  milestones  Milestone[]  
   clients     User[]     @relation("ProjectClient")
   teamMembers User[]     @relation("ProjectTeam")
+  invites     Invite[]   // Relation to invites for this project
 }
 
 model Task {
@@ -52,11 +53,15 @@ model User {
 }
 
 model Invite {
-  id    Int    @id @default(autoincrement())
-  email String
-  role  Role
-  token String @unique
+  id        Int     @id @default(autoincrement())
+  phone     String
+  role      Role
+  token     String  @unique
+  project   Project @relation(fields: [projectId], references: [id])  // Link invite to a project
+  projectId Int     // Foreign key for the associated project
 }
+
+
 
 enum Role {
   ADMIN
