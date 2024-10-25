@@ -4,12 +4,14 @@ import { NextResponse } from 'next/server';
 
 // Handler for creating a project (POST request)
 export async function POST(req: Request) {
-  const { name, tasks, milestones } = await req.json();
+  const { name, description, tasks = [], milestones = [] } = await req.json();
 
   try {
+    // Create the project with description, tasks, and milestones
     const newProject = await prisma.project.create({
       data: {
         name,
+        description,  // Add description to project creation
         tasks: {
           create: tasks.map((task) => ({ name: task.name })),
         },
@@ -24,6 +26,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: 'Project created successfully', project: newProject }, { status: 201 });
   } catch (error) {
+    console.error("Error creating project:", error); // Log the error for debugging
     return NextResponse.json({ message: 'Error creating project', error: error.message }, { status: 500 });
   }
 }

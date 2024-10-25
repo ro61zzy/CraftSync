@@ -13,10 +13,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <nav>
           <ul className="space-y-4">
           <li>
-  <Link href="/dashboard" className={`text-lg ${pathname === '/dashboard' ? 'underline' : ''}`}>
-    New Project
-  </Link>
-</li>
+              <Link href="/dashboard" className="text-lg hover:underline">
+                New Project
+              </Link>
+              </li>
             <li>
               <Link href="/dashboard/projects" className="text-lg hover:underline">
                 All Projects

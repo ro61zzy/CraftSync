@@ -8,16 +8,25 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
+
+
 model Project {
-  id          Int       @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   name        String
-  tasks       Task[]    // One project can have multiple tasks
-  milestones  Milestone[]  // One project can have multiple milestones
-  clients     User[]    @relation("ProjectClient")
-  teamMembers User[]    @relation("ProjectTeam")
-  feedback    Feedback[]  // One project can have multiple feedback entries
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  description String?    // New optional description field for projects
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  tasks       Task[]
+  milestones  Milestone[]  // Relation to milestones for this project
+  clients     User[]     @relation("ProjectClient")
+  teamMembers User[]     @relation("ProjectTeam")
+}
+
+model Task {
+  id        Int     @id @default(autoincrement())
+  name      String
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id])
 }
 
 model Milestone {
@@ -28,32 +37,25 @@ model Milestone {
   projectId Int
 }
 
-model Task {
-  id          Int       @id @default(autoincrement())
-  name        String
-  status      String    @default("not_started")
-  project     Project    @relation(fields: [projectId], references: [id])
-  projectId   Int
-}
 
-model Feedback {
-  id          Int       @id @default(autoincrement())
-  message     String
-  project     Project    @relation(fields: [projectId], references: [id])
-  projectId   Int
-  createdAt   DateTime   @default(now())
-}
 
 model User {
-  id          Int       @id @default(autoincrement())
-  email       String    @unique
-  name        String?
-  password    String
-  role        Role      @default(CLIENT)
-  projectsAsTeam Project[]  @relation("ProjectTeam")
-  projectsAsClient Project[]  @relation("ProjectClient")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id               Int       @id @default(autoincrement())
+  email            String    @unique
+  name             String?
+  password         String
+  role             Role      @default(CLIENT)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  projectsAsClient Project[] @relation("ProjectClient")
+  projectsAsTeam   Project[] @relation("ProjectTeam")
+}
+
+model Invite {
+  id    Int    @id @default(autoincrement())
+  email String
+  role  Role
+  token String @unique
 }
 
 enum Role {
@@ -61,5 +63,3 @@ enum Role {
   TEAM
   CLIENT
 }
-
-

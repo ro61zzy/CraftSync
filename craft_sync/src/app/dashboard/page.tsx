@@ -5,10 +5,10 @@ import { useState } from 'react';
 
 export default function AdminDashboard() {
   const [projectName, setProjectName] = useState('');
+  const [description, setDescription] = useState('');
   const [taskList, setTaskList] = useState([{ name: '' }]);
   const [milestones, setMilestones] = useState([{ name: '', dueDate: '' }]);
-
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState(''); 
   const [role, setRole] = useState('TEAM');
   const [message, setMessage] = useState('');
   const [projectMessage, setProjectMessage] = useState('');
@@ -50,7 +50,9 @@ export default function AdminDashboard() {
     setLoading(true);
     const payload = {
       name: projectName,
+      description,  // Include description in payload
       tasks: taskList.filter(task => task.name.trim() !== ''),
+      milestones: milestones.filter(milestone => milestone.name.trim() !== ''),  // Include milestones
     };
     
     const res = await fetch('/api/projects', {
@@ -62,7 +64,9 @@ export default function AdminDashboard() {
     if (res.ok) {
       setProjectMessage('Project created successfully!');
       setProjectName('');
+      setDescription('');  // Reset description
       setTaskList([{ name: '' }]);
+      setMilestones([{ name: '', dueDate: '' }]);
     } else {
       const errorResponse = await res.json();
       setProjectMessage(`Error creating project: ${errorResponse.message}`);
@@ -70,23 +74,31 @@ export default function AdminDashboard() {
     setLoading(false);
   };
 
+
   const handleInviteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
-      setMessage('Please enter an email.');
+    if (!phone) {
+      setMessage('Please enter a phone number.');
       return;
     }
 
     setLoading(true);
+
+    // Send invite request with phone number
     const res = await fetch('/api/invites', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, role }),
+      body: JSON.stringify({ phone, role }),
     });
 
     if (res.ok) {
+      const inviteData = await res.json();
+      // WhatsApp invite link
+      const inviteLink = `https://wa.me/${phone}?text=You have been invited to join the project. Click the link to accept: ${inviteData.inviteLink}`;
+      window.open(inviteLink, '_blank');  // Opens WhatsApp link
+
       setMessage('Invite sent successfully');
-      setEmail('');
+      setPhone('');  // Clear the input field after sending
     } else {
       setMessage('Error sending invite');
     }
@@ -109,6 +121,14 @@ export default function AdminDashboard() {
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
               className="border p-2 w-full rounded text-black"
+            />
+            
+            <textarea
+              placeholder="Project Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="border p-2 w-full rounded text-black"
+              rows={4}
             />
 
             <h3 className="text-lg font-bold text-header">Add Tasks</h3>
@@ -173,29 +193,29 @@ export default function AdminDashboard() {
 
         {/* Invite Users Section */}
         <section>
-          <h2 className="text-xl font-bold mb-4 text-header text-center">Invite Users to Project</h2>
-          <form onSubmit={handleInviteSubmit} className="space-y-4">
-            <input
-              type="email"
-              placeholder="User Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="border p-2 w-full rounded text-black"
-            />
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="border p-2 w-full rounded"
-            >
-              <option value="TEAM">Invite as Team Member</option>
-              <option value="CLIENT">Invite as Client</option>
-            </select>
-            <button type="submit" className="bg-primary text-white p-2 w-full rounded">
-              {loading ? 'Sending...' : 'Send Invite'}
-            </button>
-          </form>
-          {message && <p className="text-red-500 mt-4 text-center">{message}</p>}
-        </section>
+        <h2 className="text-xl font-bold mb-4 text-header text-center">Invite Users to Project</h2>
+        <form onSubmit={handleInviteSubmit} className="space-y-4">
+          <input
+            type="tel"
+            placeholder="User Phone Number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="border p-2 w-full rounded text-black"
+          />
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="border p-2 w-full rounded"
+          >
+            <option value="TEAM">Invite as Team Member</option>
+            <option value="CLIENT">Invite as Client</option>
+          </select>
+          <button type="submit" className="bg-primary text-white p-2 w-full rounded">
+            {loading ? 'Sending...' : 'Send Invite via WhatsApp'}
+          </button>
+        </form>
+        {message && <p className="text-red-500 mt-4 text-center">{message}</p>}
+      </section>
       </div>
 
       {/* Right Section: Text/Instructions */}

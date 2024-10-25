@@ -1,3 +1,4 @@
+//app/accept-invite/page.tsx
 "use client"
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
