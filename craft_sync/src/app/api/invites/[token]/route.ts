@@ -1,9 +1,12 @@
-// src/app/api/invites/[token]/route.ts
+import { NextRequest } from 'next/server';
 import prisma from '../../utils/prisma';
 import { NextResponse } from 'next/server';
 
+interface Params {
+  token: string;
+}
 
-export async function GET(req, { params }) {
+export async function GET(req: NextRequest, { params }: { params: Params }) {
   const { token } = params;
 
   try {
