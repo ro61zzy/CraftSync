@@ -4,7 +4,7 @@
 import { useState } from 'react';
 
 interface InviteModalProps {
-    projectId: number;  // or the appropriate type if it's different
+    projectId: string;  // or the appropriate type if it's different
     onClose: () => void;
   }
 

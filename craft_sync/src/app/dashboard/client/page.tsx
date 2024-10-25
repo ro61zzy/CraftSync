@@ -1,5 +1,27 @@
 // src/app/dashboard/client/page.tsx
+"use client"
 import { useState, useEffect } from 'react';
+
+interface Task {
+  id: number;
+  name: string;
+}
+
+interface Milestone {
+  id: number;
+  name: string;
+  dueDate: string; // Assuming it's in ISO format
+}
+
+interface Project {
+  id: number;
+  name: string;
+  description: string;
+  tasks: Task[];
+  milestones: Milestone[];
+}
+
+
 
 export default function ClientDashboard() {
   const [projects, setProjects] = useState([]);
