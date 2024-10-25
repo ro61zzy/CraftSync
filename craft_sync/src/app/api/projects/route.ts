@@ -1,10 +1,19 @@
 import prisma from '../utils/prisma';
 import { NextResponse } from 'next/server';
 
+// Define interfaces for Task and Milestone
+interface Task {
+  name: string;
+}
+
+interface Milestone {
+  name: string;
+  dueDate: string;  // Assuming dueDate is a string in ISO format
+}
 
 // Handler for creating a project (POST request)
 export async function POST(req: Request) {
-  const { name, description, tasks = [], milestones = [] } = await req.json();
+  const { name, description, tasks = [] as Task[], milestones = [] as Milestone[] } = await req.json();
 
   try {
     // Create the project with description, tasks, and milestones
@@ -13,10 +22,10 @@ export async function POST(req: Request) {
         name,
         description,  // Add description to project creation
         tasks: {
-          create: tasks.map((task) => ({ name: task.name })),
+          create: tasks.map((task: { name: any; }) => ({ name: task.name })),
         },
         milestones: {
-          create: milestones.map((milestone) => ({
+          create: milestones.map((milestone: { name: any; dueDate: string | number | Date; }) => ({
             name: milestone.name,
             dueDate: new Date(milestone.dueDate),
           })),
@@ -25,9 +34,10 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ message: 'Project created successfully', project: newProject }, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error creating project:", error); // Log the error for debugging
-    return NextResponse.json({ message: 'Error creating project', error: error.message }, { status: 500 });
+    const errorMessage = (error instanceof Error) ? error.message : 'Unknown error occurred';
+    return NextResponse.json({ message: 'Error creating project', error: errorMessage }, { status: 500 });
   }
 }
 
@@ -42,7 +52,9 @@ export async function GET() {
     });
 
     return NextResponse.json({ projects }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json({ message: 'Error fetching projects', error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    console.error("Error fetching projects:", error); // Log the error for debugging
+    const errorMessage = (error instanceof Error) ? error.message : 'Unknown error occurred';
+    return NextResponse.json({ message: 'Error fetching projects', error: errorMessage }, { status: 500 });
   }
 }

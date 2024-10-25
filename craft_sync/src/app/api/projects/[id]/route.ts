@@ -19,7 +19,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   
       return NextResponse.json({ project }, { status: 200 });
     } catch (error) {
-      return NextResponse.json({ message: 'Error fetching project', error: error.message }, { status: 500 });
+      return NextResponse.json({ message: 'Error fetching project', error: error}, { status: 500 });
     }
   }
   
