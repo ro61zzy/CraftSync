@@ -3,13 +3,18 @@
 "use client";
 import { useState } from 'react';
 
-const InviteModal = ({ projectId, onClose }) => {
+interface InviteModalProps {
+    projectId: number;  // or the appropriate type if it's different
+    onClose: () => void;
+  }
+
+  const InviteModal: React.FC<InviteModalProps> = ({ projectId, onClose }) => {
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState('TEAM');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleInviteSubmit = async (e) => {
+  const handleInviteSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     if (!phone) {
       setMessage('Please enter a phone number.');

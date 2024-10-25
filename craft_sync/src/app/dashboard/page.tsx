@@ -3,20 +3,26 @@
 "use client";
 import { useState } from 'react';
 
+interface Milestone {
+  name: string;
+  dueDate: string;
+}
+
 
 export default function AdminDashboard() {
   const [projectName, setProjectName] = useState('');
   const [description, setDescription] = useState('');
   const [taskList, setTaskList] = useState([{ name: '' }]);
-  const [milestones, setMilestones] = useState([{ name: '', dueDate: '' }]);
+  const [milestones, setMilestones] = useState<Milestone[]>([{ name: '', dueDate: '' }]);
   const [projectMessage, setProjectMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleMilestoneChange = (index, field, value) => {
+  const handleMilestoneChange = (index: number, field: keyof Milestone, value: string) => {
     const updatedMilestones = [...milestones];
     updatedMilestones[index][field] = value;
     setMilestones(updatedMilestones);
   };
+  
 
   const addMilestone = () => {
     setMilestones([...milestones, { name: '', dueDate: '' }]);

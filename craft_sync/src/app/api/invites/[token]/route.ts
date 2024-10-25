@@ -15,7 +15,7 @@ export async function GET(req, { params }) {
       return NextResponse.json({ message: 'Invalid invite' }, { status: 404 });
     }
 
-    return NextResponse.json({ email: invite.email, role: invite.role }, { status: 200 });
+    return NextResponse.json({ phone: invite.phone, role: invite.role }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ message: 'Error fetching invite' }, { status: 500 });
   }
