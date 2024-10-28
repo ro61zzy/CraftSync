@@ -40,44 +40,11 @@ export default function ClientDashboard() {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-4">My Projects</h1>
-      {projects.length === 0 ? (
+
         <p>You have no assigned projects.</p>
-      ) : (
-        <ul>
-          {projects.map((project) => (
-            <li key={project.id} className="mb-4 p-4 border">
-              <h2 className="text-xl font-bold">{project.name}</h2>
-              <p>Project Progress: {project.progress}%</p>
-              <h3 className="text-lg font-bold">Milestones</h3>
-              <ul>
-                {project.milestones.map((milestone) => (
-                  <li key={milestone.id}>
-                    <span>{milestone.name} - Due by {new Date(milestone.dueDate).toLocaleDateString()}</span>
-                  </li>
-                ))}
-              </ul>
-              <p>Tasks:</p>
-              <ul>
-                {project.tasks.map((task) => (
-                  <li key={task.id}>
-                    <span>{task.name} - </span>
-                    <span>{task.status === 'done' ? '✔️ Completed' : '❌ In Progress'}</span>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      )}
+    
     </div>
   );
 }
 
-async function handleFeedback(projectId, feedback) {
-  // Make API call to submit the feedback
-  await fetch(`/api/client/projects/${projectId}/feedback`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ feedback }),
-  });
-}
+

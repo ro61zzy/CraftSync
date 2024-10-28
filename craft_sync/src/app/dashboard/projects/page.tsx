@@ -110,9 +110,9 @@ const ProjectsPage = () => {
         </div>
       )}
 
-      {showInviteModal && (
-        <InviteModal projectId={selectedProjectId} onClose={closeInviteModal} />
-      )}
+{showInviteModal && (
+  <InviteModal projectId={selectedProjectId ? String(selectedProjectId) : ''} onClose={closeInviteModal} />
+)}
     </div>
   );
 };
