@@ -1,6 +1,5 @@
 // src/app/dashboard/projects/InviteModal.tsx
 
-
 "use client";
 import { useState } from 'react';
 
@@ -29,11 +28,18 @@ const InviteModal: React.FC<InviteModalProps> = ({ projectId, onClose }) => {
       body: JSON.stringify({ phone, role, projectId }), // Include projectId in the request
     });
 
+
+
     if (res.ok) {
       const inviteData = await res.json();
+      console.log("Invite data with token:", inviteData);
+      
+      // Only encode the invite link to ensure proper WhatsApp parsing
       const encodedInviteLink = encodeURIComponent(inviteData.inviteLink);
-      const whatsappLink = `https://wa.me/${phone}?text=You have been invited to join the project. Click the link to accept: ${encodedInviteLink}`;
+      const whatsappLink = `https://wa.me/${phone}?text=You+have+been+invited+to+join+the+project.+Click+the+link+to+accept:+${encodedInviteLink}`;
 
+      console.log(phone,"first", encodedInviteLink)
+    
       window.open(whatsappLink, '_blank');  // Opens WhatsApp link
       setMessage('Invite sent successfully');
       setPhone('');  // Clear the input field after sending
@@ -41,6 +47,7 @@ const InviteModal: React.FC<InviteModalProps> = ({ projectId, onClose }) => {
       setMessage('Error sending invite');
     }
     setLoading(false);
+    
   };
 
   return (
