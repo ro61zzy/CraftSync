@@ -11,7 +11,7 @@ interface Milestone {
   dueDate: string;  // Assuming dueDate is a string in ISO format
 }
 
-// Handler for creating a project (POST request)
+// Handler for creating a project (POST request) will build
 export async function POST(req: Request) {
   const { name, description, tasks = [] as Task[], milestones = [] as Milestone[] } = await req.json();
 
