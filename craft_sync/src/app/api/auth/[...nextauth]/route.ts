@@ -3,7 +3,6 @@ export const dynamic = "force-dynamic";
 
 import NextAuth, { DefaultSession } from 'next-auth';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import prisma from '../../utils/prisma';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
 import { NextAuthOptions } from 'next-auth';
@@ -25,7 +24,16 @@ declare module 'next-auth' {
 }
 
 const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(
+    (() => {
+      // Use a function to import prisma only when needed at runtime
+      if (typeof window === 'undefined') {
+        const { default: prisma } = require('../../utils/prisma');
+        return prisma;
+      }
+      return undefined;
+    })()
+  ),
   session: {
     strategy: 'jwt',
   },
@@ -38,6 +46,9 @@ const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials) return null;
+
+        // Dynamically import prisma at runtime to avoid errors during build
+        const { default: prisma } = await import('../../utils/prisma');
 
         // Find user by email
         const user = await prisma.user.findUnique({
