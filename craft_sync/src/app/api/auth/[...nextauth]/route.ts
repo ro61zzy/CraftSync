@@ -1,4 +1,6 @@
 // src/app/api/auth/[...nextauth]/route.ts
+export const dynamic = "force-dynamic";
+
 import NextAuth, { DefaultSession } from 'next-auth';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import prisma from '../../utils/prisma';
