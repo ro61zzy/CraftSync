@@ -1,10 +1,11 @@
 // app/accept-invite/page.tsx
 
-"use client"
-import { useState, useEffect } from 'react';
+"use client";
+
+import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function AcceptInvite() {
+function AcceptInviteContent() {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
   const router = useRouter();
@@ -17,13 +18,15 @@ export default function AcceptInvite() {
       const data = await res.json();
 
       if (res.ok) {
-        setRole(data.role);  // Set role from invite data (TEAM or CLIENT)
+        setRole(data.role); // Set role from invite data (TEAM or CLIENT)
       } else {
         alert('Invalid invite link');
         router.push('/'); // Redirect if the invite is invalid
       }
     }
-    fetchInvite();
+    if (inviteToken) {
+      fetchInvite();
+    }
   }, [inviteToken]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,7 +35,7 @@ export default function AcceptInvite() {
     const res = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password, role }),  // Use the role from invite
+      body: JSON.stringify({ password, role }), // Use the role from invite
     });
 
     if (res.ok) {
@@ -58,5 +61,13 @@ export default function AcceptInvite() {
         </button>
       </form>
     </div>
+  );
+}
+
+export default function AcceptInvite() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AcceptInviteContent />
+    </Suspense>
   );
 }
