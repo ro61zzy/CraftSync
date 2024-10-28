@@ -1,13 +1,17 @@
 // src/app/api/auth/[...nextauth]/route.ts
-import NextAuth, { DefaultSession, NextAuthOptions } from 'next-auth';
+import NextAuth, { DefaultSession } from 'next-auth';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import prisma from '../../utils/prisma';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
+import { NextAuthOptions } from 'next-auth';
 
 // Extend the NextAuth User type to include `role`
 declare module 'next-auth' {
   interface User {
+    id: number;
+    name: string | null;
+    email: string;
     role: string;
   }
 
@@ -18,7 +22,7 @@ declare module 'next-auth' {
   }
 }
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: 'jwt',
@@ -43,7 +47,9 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        return user; // Successful auth returns the user object
+        // Return the user object without the password field
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword; // Ensure only non-sensitive fields are returned
       },
     }),
   ],
@@ -64,5 +70,6 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
+// Directly wrap `NextAuth` with the configured `authOptions`
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
