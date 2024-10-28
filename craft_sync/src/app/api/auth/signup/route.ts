@@ -1,4 +1,6 @@
 // src/app/api/auth/signup/route.ts
+export const dynamic = "force-dynamic";
+
 import prisma from '../../utils/prisma';
 import { hash } from 'bcryptjs';
 import { NextResponse } from 'next/server';
@@ -26,7 +28,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
   } catch (error) {
-    console.error('Error creating user:', error); // Log the error details for debugging
-    return NextResponse.json({ message: 'Error creating user', error}, { status: 500 });
+    console.error('Error creating user:', error);
+    return NextResponse.json({ message: 'Error creating user', error }, { status: 500 });
   }
 }
