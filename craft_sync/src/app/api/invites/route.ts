@@ -23,6 +23,7 @@ export async function POST(req: Request) {
     const inviteLink = `${process.env.BASE_URL}/accept-invite?token=${inviteToken}`;
     return NextResponse.json({ message: 'Invite created successfully', inviteLink }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: 'Error creating invite', error: error }, { status: 500 });
+    console.error('Error creating invite:', error);
+    return NextResponse.json({ message: 'Error creating invite', error: error.message }, { status: 500 });
   }
 }

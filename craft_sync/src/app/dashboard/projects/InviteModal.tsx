@@ -1,20 +1,21 @@
 // src/app/dashboard/projects/InviteModal.tsx
 
+
 "use client";
 import { useState } from 'react';
 
 interface InviteModalProps {
-    projectId: string;  // or the appropriate type if it's different
-    onClose: () => void;
-  }
+  projectId: string;
+  onClose: () => void;
+}
 
-  const InviteModal: React.FC<InviteModalProps> = ({ projectId, onClose }) => {
+const InviteModal: React.FC<InviteModalProps> = ({ projectId, onClose }) => {
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState('TEAM');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleInviteSubmit = async (e: { preventDefault: () => void; }) => {
+  const handleInviteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone) {
       setMessage('Please enter a phone number.');
@@ -22,8 +23,6 @@ interface InviteModalProps {
     }
 
     setLoading(true);
-
-    // Send invite request with phone number and project ID
     const res = await fetch('/api/invites', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -32,9 +31,10 @@ interface InviteModalProps {
 
     if (res.ok) {
       const inviteData = await res.json();
-      const inviteLink = `https://wa.me/${phone}?text=You have been invited to join the project. Click the link to accept: ${inviteData.inviteLink}`;
-      window.open(inviteLink, '_blank');  // Opens WhatsApp link
+      const encodedInviteLink = encodeURIComponent(inviteData.inviteLink);
+      const whatsappLink = `https://wa.me/${phone}?text=You have been invited to join the project. Click the link to accept: ${encodedInviteLink}`;
 
+      window.open(whatsappLink, '_blank');  // Opens WhatsApp link
       setMessage('Invite sent successfully');
       setPhone('');  // Clear the input field after sending
     } else {
