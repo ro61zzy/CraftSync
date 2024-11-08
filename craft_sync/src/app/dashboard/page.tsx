@@ -43,10 +43,40 @@ export default function AdminDashboard() {
     tasks.splice(index, 1);
     setTaskList(tasks);
   };
-
   const handleProjectSubmit = async (e: React.FormEvent) => {
-   
+    e.preventDefault();
+    if (!projectName || taskList.some(task => !task.name)) {
+      setProjectMessage('Please fill in all fields.');
+      return;
+    }
+    
+    setLoading(true);
+    const payload = {
+      name: projectName,
+      description,  // Include description in payload
+      tasks: taskList.filter(task => task.name.trim() !== ''),
+      milestones: milestones.filter(milestone => milestone.name.trim() !== ''),  // Include milestones
+    };
+    
+    const res = await fetch('/api/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  
+    if (res.ok) {
+      setProjectMessage('Project created successfully!');
+      setProjectName('');
+      setDescription('');  // Reset description
+      setTaskList([{ name: '' }]);
+      setMilestones([{ name: '', dueDate: '' }]);
+    } else {
+      const errorResponse = await res.json();
+      setProjectMessage(`Error creating project: ${errorResponse.message}`);
+    }
+    setLoading(false);
   };
+
 
 
 
