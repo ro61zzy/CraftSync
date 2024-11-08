@@ -1,6 +1,4 @@
 // src/app/api/auth/signup/route.ts
-export const dynamic = "force-dynamic";
-
 import prisma from '../../utils/prisma';
 import { hash } from 'bcryptjs';
 import { NextResponse } from 'next/server';
