@@ -12,13 +12,19 @@ export async function POST(req: Request) {
   const inviteToken = Math.random().toString(36).substring(2, 15);
 
   try {
+    // Convert projectId to an integer
+    const parsedProjectId = parseInt(projectId, 10);
+    if (isNaN(parsedProjectId)) {
+      return NextResponse.json({ message: 'Invalid project ID' }, { status: 400 });
+    }
+
     // Create the invite in the database
     const invite = await prisma.invite.create({
       data: {
         phone,
         role,
         token: inviteToken,
-        project: { connect: { id: projectId } },
+        project: { connect: { id: parsedProjectId } },
       },
     });
 
