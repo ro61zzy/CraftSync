@@ -42,20 +42,3 @@ export async function POST(req: Request) {
   }
 }
 
-// Handler for fetching all projects (GET request)
-export async function GET() {
-  try {
-    const projects = await prisma.project.findMany({
-      include: {
-        tasks: true,
-        milestones: true,
-      },
-    });
-
-    return NextResponse.json({ projects }, { status: 200 });
-  } catch (error: unknown) {
-    console.error("Error fetching projects:", error); // Log the error for debugging
-    const errorMessage = (error instanceof Error) ? error.message : 'Unknown error occurred';
-    return NextResponse.json({ message: 'Error fetching projects', error: errorMessage }, { status: 500 });
-  }
-}

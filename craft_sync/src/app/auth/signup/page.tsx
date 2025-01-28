@@ -1,4 +1,5 @@
 // src/app/auth/signup/page.tsx
+
 "use client";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -38,7 +39,7 @@ export default function SignUpAdmin() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="border border-gray-300 p-3 w-full rounded focus:outline-none focus:ring-2 focus:ring-primary transition duration-200"
+            className="border border-gray-300 p-3 w-full rounded focus:outline-none focus:ring-2 focus:ring-primary text-black transition duration-200"
             required
           />
         </div>
@@ -48,7 +49,7 @@ export default function SignUpAdmin() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="border border-gray-300 p-3 w-full rounded focus:outline-none focus:ring-2 focus:ring-primary transition duration-200"
+            className="border border-gray-300 p-3 w-full rounded focus:outline-none focus:ring-2 text-black focus:ring-primary transition duration-200"
             required
           />
         </div>

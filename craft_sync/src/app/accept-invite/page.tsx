@@ -1,64 +1,45 @@
-// src/app/accept-invite/page.tsx
 
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const AcceptInvitePage = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token");
-
+  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [inviteData, setInviteData] = useState<{ role: string; projectId: number } | null>(null);
 
   useEffect(() => {
-    const fetchInviteData = async () => {
-      if (!token) {
-        setError("No invite token provided.");
-        setLoading(false);
-        return;
-      }
+    const token = new URLSearchParams(window.location.search).get('token');
+    if (!token) {
+      setMessage('Invalid invite link');
+      setLoading(false);
+      return;
+    }
 
-      try {
-        const res = await fetch(`/api/invites/validate?token=${token}`);
-        if (res.ok) {
-          const data = await res.json();
-          setInviteData(data);
+    // Verify the token
+    fetch(`/api/invites/verify?token=${token}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.projectId) {
+          setMessage('Invite verified! Please sign up or log in to continue.');
         } else {
-          setError("Invalid or expired invite token.");
+          setMessage('Invalid or expired invite link.');
         }
-      } catch (error) {
-        setError("An error occurred while validating the invite.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchInviteData();
-  }, [token]);
-
-  const handleSignupRedirect = () => {
-    if (inviteData) {
-      router.push(`/auth/signup?role=${inviteData.role}&projectId=${inviteData.projectId}&token=${token}`);
-    }
-  };
-
-  const handleLoginRedirect = () => {
-    if (inviteData) {
-      router.push(`/auth/login?token=${token}`);
-    }
-  };
+      })
+      .catch(() => setMessage('An error occurred.'))
+      .finally(() => setLoading(false));
+  }, []);
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
-
   return (
     <div>
-      <h2>You've been invited to join as a {inviteData?.role}</h2>
-      <button onClick={handleSignupRedirect} className="btn-primary">Sign Up</button>
-      <button onClick={handleLoginRedirect} className="btn-secondary">Log In</button>
+      <p>{message}</p>
+      {message.includes('verified') && (
+        <button onClick={() => router.push('/auth/signup?token=abc123')}>
+          Sign Up / Log In
+        </button>
+      )}
     </div>
   );
 };
