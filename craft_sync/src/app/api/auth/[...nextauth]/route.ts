@@ -69,6 +69,7 @@ const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = (user as any).role; // Casting to any to access `role`
+        
       }
       return token;
     },

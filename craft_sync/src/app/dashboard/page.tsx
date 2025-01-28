@@ -3,6 +3,9 @@
 "use client";
 import { useState } from 'react';
 
+
+
+
 interface Milestone {
   name: string;
   dueDate: string;
@@ -16,6 +19,12 @@ export default function AdminDashboard() {
   const [milestones, setMilestones] = useState<Milestone[]>([{ name: '', dueDate: '' }]);
   const [projectMessage, setProjectMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // const userId = session?.user?.id;  // Access the logged-in user's ID
+
+  
+
+
 
   const handleMilestoneChange = (index: number, field: keyof Milestone, value: string) => {
     const updatedMilestones = [...milestones];
@@ -43,6 +52,8 @@ export default function AdminDashboard() {
     tasks.splice(index, 1);
     setTaskList(tasks);
   };
+
+
   const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projectName || taskList.some(task => !task.name)) {

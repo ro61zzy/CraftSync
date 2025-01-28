@@ -34,16 +34,19 @@ export default function SignIn() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 w-full mb-4"
+          className="border border-gray-300 p-3 w-full rounded focus:outline-none focus:ring-2 focus:ring-primary text-black transition duration-200"
+
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 w-full mb-4"
+          className="border border-gray-300 p-3 w-full rounded focus:outline-none focus:ring-2 focus:ring-primary text-black transition duration-200"
+
         />
-        <button type="submit" className="bg-blue-500 text-white p-2 w-full">
+        <button type="submit"  className="bg-primary text-white p-3 w-full rounded-lg shadow hover:bg-hover transition duration-200"
+        >
           Sign In
         </button>
       </form>
