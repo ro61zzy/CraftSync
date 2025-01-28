@@ -1,32 +1,25 @@
-//src/app/api/projects/route.ts
 import prisma from '../utils/prisma';
 import { NextResponse } from 'next/server';
 
-// Define interfaces for Task and Milestone
-interface Task {
-  name: string;
-}
-
-interface Milestone {
-  name: string;
-  dueDate: string;  // Assuming dueDate is a string in ISO format
-}
-
-// Handler for creating a project (POST request) will build
 export async function POST(req: Request) {
-  const { name, description, tasks = [] as Task[], milestones = [] as Milestone[] } = await req.json();
+  const { name, description, tasks = [], milestones = [], userId } = await req.json();
+
+  if (!userId) {
+    return NextResponse.json({ message: 'User ID is required' }, { status: 400 });
+  }
 
   try {
-    // Create the project with description, tasks, and milestones
+    // Create the project and link it to the user (Project Manager)
     const newProject = await prisma.project.create({
       data: {
         name,
-        description,  // Add description to project creation
+        description,
+        createdBy: { connect: { id: userId } }, // Associate project with the user
         tasks: {
-          create: tasks.map((task: { name: any; }) => ({ name: task.name })),
+          create: tasks.map((task: { name: string }) => ({ name: task.name })),
         },
         milestones: {
-          create: milestones.map((milestone: { name: any; dueDate: string | number | Date; }) => ({
+          create: milestones.map((milestone: { name: string; dueDate: string }) => ({
             name: milestone.name,
             dueDate: new Date(milestone.dueDate),
           })),
@@ -35,10 +28,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ message: 'Project created successfully', project: newProject }, { status: 201 });
-  } catch (error: unknown) {
-    console.error("Error creating project:", error); // Log the error for debugging
-    const errorMessage = (error instanceof Error) ? error.message : 'Unknown error occurred';
-    return NextResponse.json({ message: 'Error creating project', error: errorMessage }, { status: 500 });
+  } catch (error) {
+    console.error('Error creating project:', error);
+    return NextResponse.json({ message: 'Error creating project' }, { status: 500 });
   }
 }
-
