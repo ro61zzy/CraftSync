@@ -6,7 +6,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
 import { NextAuthOptions } from 'next-auth';
 
-// Extend the NextAuth User type to include `role`
+// Extend NextAuth User type to include `id`
 declare module 'next-auth' {
   interface User {
     id: number;
@@ -17,15 +17,15 @@ declare module 'next-auth' {
 
   interface Session {
     user: {
+      id: number;  // ✅ Ensure `id` is included in session type
       role: string;
     } & DefaultSession['user'];
   }
 }
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(
     (() => {
-      // Use a function to import prisma only when needed at runtime
       if (typeof window === 'undefined') {
         const { default: prisma } = require('../../utils/prisma');
         return prisma;
@@ -35,6 +35,16 @@ const authOptions: NextAuthOptions = {
   ),
   session: {
     strategy: 'jwt',
+  },
+  cookies: { // ✅ Ensures secure cookie handling
+    sessionToken: {
+      name: "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax", // ✅ Important for cross-site API calls
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
   },
   providers: [
     CredentialsProvider({
@@ -46,35 +56,30 @@ const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials) return null;
 
-        // Dynamically import prisma at runtime to avoid errors during build
         const { default: prisma } = await import('../../utils/prisma');
-
-        // Find user by email
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
 
-        // If no user found or password doesn't match, return null
         if (!user || !(await compare(credentials.password, user.password))) {
           return null;
         }
 
-        // Return the user object without the password field
-        const { password, ...userWithoutPassword } = user;
-        return userWithoutPassword; // Ensure only non-sensitive fields are returned
+        return { id: user.id, email: user.email, name: user.name, role: user.role };
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as any).role; // Casting to any to access `role`
-        
+        token.id = user.id;  // ✅ Store `id` in token
+        token.role = user.role; 
       }
       return token;
     },
     async session({ session, token }) {
-      session.user.role = token.role as string; // Type-safe addition of role
+      session.user.id = token.id as number;  // ✅ Ensure session includes `id`
+      session.user.role = token.role as string;
       return session;
     },
   },
@@ -83,6 +88,8 @@ const authOptions: NextAuthOptions = {
   },
 };
 
-// Directly wrap `NextAuth` with the configured `authOptions`
+
+
+// ✅ Ensure NextAuth handler is exported correctly
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

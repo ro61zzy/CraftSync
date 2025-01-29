@@ -73,6 +73,7 @@ export default function AdminDashboard() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
+      credentials: 'include',  // ✅ Ensures cookies are sent
     });
   
     if (res.ok) {

@@ -1,20 +1,30 @@
 import prisma from '../utils/prisma';
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../auth/[...nextauth]/route';
+
 
 export async function POST(req: Request) {
-  const { name, description, tasks = [], milestones = [], userId } = await req.json();
+  console.log("Cookies:", req.headers.get('cookie'));  // ✅ Debug cookies
 
-  if (!userId) {
-    return NextResponse.json({ message: 'User ID is required' }, { status: 400 });
+  // ✅ Correct usage of `getServerSession`
+  const session = await getServerSession(authOptions); 
+
+  console.log("Session found:", session);  // ✅ Debug session
+
+  if (!session || !session.user || !session.user.id) {
+    console.log("Session is missing:", session);
+    return NextResponse.json({ message: 'Unauthorized: Please log in' }, { status: 401 });
   }
 
+  const { name, description, tasks = [], milestones = [] } = await req.json();
+
   try {
-    // Create the project and link it to the user (Project Manager)
     const newProject = await prisma.project.create({
       data: {
         name,
         description,
-        createdBy: { connect: { id: userId } }, // Associate project with the user
+        createdById: session.user.id, // ✅ Use the logged-in user's ID
         tasks: {
           create: tasks.map((task: { name: string }) => ({ name: task.name })),
         },
@@ -33,3 +43,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: 'Error creating project' }, { status: 500 });
   }
 }
+
